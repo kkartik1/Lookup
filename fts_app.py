@@ -11,13 +11,13 @@ def load_mapping_file():
     try:
         # In production, use the actual path where the mapping file is stored
         mapping_df = pd.read_csv("FTS_Mapping.csv")
-        mas_map_df = mapping_df[['Type',	'Target','Master']]
-        acc_map_df = mapping_df[['Type',	'Target','Account']]
-        acc_map_df.columns = ['Type',	'Target','Master']
-        cus_map_df = mapping_df[['Type',	'Target','Customer']]
-        cus_map_df.columns = ['Type',	'Target','Master']
-        dep_map_df = mapping_df[['Type',	'Target','Department']]
-        dep_map_df.columns = ['Type',	'Target','Master']
+        mas_map_df = mapping_df[['Type','Target','Master']]
+        acc_map_df = mapping_df[['Type','Target','Account']]
+        acc_map_df.columns = ['Type','Target','Master']
+        cus_map_df = mapping_df[['Type','Target','Customer']]
+        cus_map_df.columns = ['Type','Target','Master']
+        dep_map_df = mapping_df[['Type','Target','Department']]
+        dep_map_df.columns = ['Type','Target','Master']
         return mas_map_df, acc_map_df, cus_map_df, dep_map_df 
     except FileNotFoundError:
         st.error("Mapping file (FTS_Mapping.csv) not found. Please place it in the application directory.")
