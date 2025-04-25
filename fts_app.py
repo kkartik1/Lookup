@@ -143,7 +143,7 @@ def process_files(master_df, source_df, mapping_df, sheet):
                     target_column = out_row['Target']
                     master_column = out_row['Master']
                     if master_column in master_df.columns and target_column in result_df.columns:
-                        result_df.at[idx, target_column] = master_row[master_column]
+                        result_df.at[source_idx, target_column] = master_row[master_column]
                 
                     # Remove the matched row from the source dataframe
                 source_copy_df = source_copy_df.drop(source_idx)
