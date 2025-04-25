@@ -218,8 +218,10 @@ def main():
                st.write(f"Total rows (Source Lookup): {len(source_df)}")
             
             # Show COSMOS data previews
+            lst_tabs = []
             tabs = st.tabs(selected_sheets)
             for i, sheet_name in enumerate(selected_sheets):
+                lst_tabs.append(sheet_name)
                 with tabs[i]:
                     st.write(f"{sheet_name}:")
                     st.write(f"Total rows: {len(cosmos_dfs[sheet_name])}")
@@ -228,9 +230,9 @@ def main():
             if st.button("Process Files"):
                 with st.spinner("Processing files..."):
                     result_df = process_files(master_df, source_df, mas_map_df, 'Master Lookup')
-                    result_df2 = process_files(cosmos_dfs['ACCOUNT'], result_df, acc_map_df, 'Account Lookup')
-                    result_df3 = process_files(cosmos_dfs['CUST'], result_df2, cus_map_df, 'Customer Lookup')
-                    result_df4 = process_files(cosmos_dfs['DEP'], result_df3, dep_map_df, 'Department Lookup')
+                    result_df2 = process_files(cosmos_dfs[lst_tabs[0]], result_df, acc_map_df, 'Account Lookup')
+                    result_df3 = process_files(cosmos_dfs[lst_tabs[1]], result_df2, cus_map_df, 'Customer Lookup')
+                    result_df4 = process_files(cosmos_dfs[lst_tabs[2]], result_df3, dep_map_df, 'Department Lookup')
                 st.success("Processing complete!")
                 
                 # Display results
