@@ -1,3 +1,7 @@
+a. fts_app_base: Sequentially processed output with calculated eclapsed time.
+b. fts_app_src: Single loop processed output with calculated eclapsed time.
+
+
 The lookup application implements all the requirements as specified below:
 
 User Interface: A Streamlit app that accepts three Excel files as input - Master Lookup, COSMOS Lookup and Source Excel.
