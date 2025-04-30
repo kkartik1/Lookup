@@ -45,14 +45,14 @@ def get_required_columns_from_mapping(mapping_df, column_type):
     return [col for col in in_mappings[column_type].unique().tolist() if pd.notna(col)]
 
 
-def check_special_characters(df):
+def check_special_characters(df, cols):
     """Check for special characters in all columns except allowed ones"""
     allowed_chars = ['%', '-', '/', ')', '(', '>', '<']
     allowed_pattern = r'^[a-zA-Z0-9\s' + ''.join([re.escape(c) for c in allowed_chars]) + ']*$'
     
     invalid_cells = []
     
-    for col in df.columns:
+    for col in cols:
         for idx, value in df[col].astype(str).items():
             if not re.match(allowed_pattern, value):
                 invalid_chars = [c for c in value if c not in allowed_chars and not c.isalnum() and not c.isspace()]
@@ -450,8 +450,8 @@ def main():
                 return
             
             # Check for special characters in all files
-            master_invalid_cells = check_special_characters(master_df)
-            source_invalid_cells = check_special_characters(source_df)
+            master_invalid_cells = check_special_characters(master_df, mapping_df['Master'].dropna().tolist())
+            source_invalid_cells = check_special_characters(source_df, mapping_df['Target'].dropna().tolist())
             
             if master_invalid_cells:
                 st.error("Master file contains invalid special characters:")
@@ -575,7 +575,7 @@ def main():
                                     return  # Skip this sheet but continue with others
                         
                         # Check for special characters
-                        sheet_invalid_cells = check_special_characters(sheet_df)
+                        sheet_invalid_cells = check_special_characters(sheet_df, required_sheet_columns)
                         if sheet_invalid_cells:
                             st.error(f"COSMOS '{sheet}' sheet (assigned to {role}) contains invalid special characters:")
                             for idx, col, value, chars in sheet_invalid_cells[:5]:  # Show first 5
