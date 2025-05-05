@@ -4,6 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import io
+import tempfile
+import os
 
 def send_html_email(data_df, to_email, subject, from_email, attachment_df=None, attachment_name=None, smtp_server='smtp.example.com', smtp_port=587, username=None, password=None):
     """
@@ -101,16 +103,51 @@ def send_html_email(data_df, to_email, subject, from_email, attachment_df=None, 
             # Convert DataFrame to CSV
             csv_data = attachment_df.to_csv(index=False)
             attachment = MIMEApplication(csv_data, Name=attachment_name)
-        elif attachment_name.endswith('.xlsx'):
-            # Convert DataFrame to Excel
-            excel_buffer = io.BytesIO()
-            attachment_df.to_excel(excel_buffer, index=False)
-            excel_buffer.seek(0)
-            attachment = MIMEApplication(excel_buffer.read(), Name=attachment_name)
+        elif attachment_name.endswith('.xlsx') or attachment_name.endswith('.xls'):
+            try:
+                # Create a temporary file
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.xls')
+                temp_file.close()
+                
+                try:
+                    # Use the default engine (whatever is available on the system)
+                    attachment_df.to_excel(temp_file.name, index=False)
+                except Exception as e:
+                    print(f"Excel export failed: {str(e)}")
+                    # Fall back to CSV
+                    os.unlink(temp_file.name)  # Delete the temp file
+                    csv_data = attachment_df.to_csv(index=False)
+                    csv_attachment_name = attachment_name.rsplit('.', 1)[0] + '.csv'
+                    attachment = MIMEApplication(csv_data, Name=csv_attachment_name)
+                    attachment_name = csv_attachment_name
+                    
+                    # Add header and attach
+                    attachment['Content-Disposition'] = f'attachment; filename="{attachment_name}"'
+                    msg.attach(attachment)
+                    return  # Skip the rest of this block
+                
+                # Read the Excel file
+                with open(temp_file.name, 'rb') as f:
+                    excel_data = f.read()
+                    
+                # Delete the temp file
+                os.unlink(temp_file.name)
+                
+                # Create attachment
+                attachment = MIMEApplication(excel_data, Name=attachment_name)
+                
+            except Exception as e:
+                # Fall back to CSV for any error
+                print(f"Error creating Excel file: {str(e)}. Using CSV format instead.")
+                csv_data = attachment_df.to_csv(index=False)
+                csv_attachment_name = attachment_name.rsplit('.', 1)[0] + '.csv'
+                attachment = MIMEApplication(csv_data, Name=csv_attachment_name)
+                attachment_name = csv_attachment_name
         else:
             # Default to CSV if extension is not recognized
             csv_data = attachment_df.to_csv(index=False)
-            attachment = MIMEApplication(csv_data, Name=f"{attachment_name}.csv")
+            attachment_name = f"{attachment_name}.csv"
+            attachment = MIMEApplication(csv_data, Name=attachment_name)
         
         # Add header with attachment name
         attachment['Content-Disposition'] = f'attachment; filename="{attachment_name}"'
@@ -167,7 +204,12 @@ if __name__ == "__main__":
         subject='Rule Processing Summary Report',
         from_email='sender@example.com',
         attachment_df=attachment_df,
-        attachment_name='rule_details.xlsx',
+        attachment_name='rule_details.xlsx',  # Excel format will be used if xlwt is available
+        smtp_server='smtp.example.com',
+        smtp_port=587,
+        username='your_username',
+        password='your_password'
+    )
         smtp_server='smtp.example.com',
         smtp_port=587,
         username='your_username',
