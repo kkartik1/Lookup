@@ -1,217 +1,173 @@
-import pandas as pd
 import smtplib
+import pandas as pd
+import io
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
-import io
-import tempfile
-import os
+from email.mime.base import MIMEBase
+from email import encoders
 
-def send_html_email(data_df, to_email, subject, from_email, attachment_df=None, attachment_name=None, smtp_server='smtp.example.com', smtp_port=587, username=None, password=None):
+def send_excel_processing_email(results_df, recipient_email, subject="Excel Processing Results", attach_excel=True, excel_filename="results.xlsx"):
     """
-    Send an HTML email with a body containing data from a DataFrame and an optional DataFrame attachment.
+    Send an HTML email with Excel processing results and an optional Excel attachment
     
     Parameters:
     -----------
-    data_df : pandas.DataFrame
-        DataFrame containing the data to be displayed in the email body.
-        Expected columns: 'Filename', 'Tab', '#Rules', '#Matches', '#Mismatches'
-    to_email : str
-        Recipient's email address
-    subject : str
-        Email subject
-    from_email : str
-        Sender's email address
-    attachment_df : pandas.DataFrame, optional
-        DataFrame to be attached to the email
-    attachment_name : str, optional
-        Name of the attachment file (e.g., 'data.csv')
-    smtp_server : str
-        SMTP server address
-    smtp_port : int
-        SMTP server port
-    username : str, optional
-        SMTP authentication username
-    password : str, optional
-        SMTP authentication password
+    results_df : pandas.DataFrame
+        DataFrame containing processing results with columns:
+        Filename, Tab, #Rules, #Matches, #Mismatches
+    recipient_email : str
+        Email address of the recipient
+    subject : str, optional
+        Subject line for the email (default: "Excel Processing Results")
+    attach_excel : bool, optional
+        Whether to attach the DataFrame as an Excel file (default: True)
+    excel_filename : str, optional
+        Name of the Excel file attachment (default: "results.xlsx")
+        
+    Returns:
+    --------
+    bool
+        True if email was sent successfully, False otherwise
     """
     # Create message container
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
-    msg['From'] = from_email
-    msg['To'] = to_email
+    msg['From'] = "excel_processor@example.com"  # Replace with actual sender email
+    msg['To'] = recipient_email
     
-    # Create HTML version of the message
-    html = """
+    # Create HTML table from DataFrame
+    html_table = results_df.to_html(index=False, classes='table table-striped')
+    
+    # Create the HTML email body
+    html = f"""
     <html>
     <head>
         <style>
-            table {
+            .table {{
                 border-collapse: collapse;
                 width: 100%;
-            }
-            th, td {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 8px;
-            }
-            th {
+                font-family: Arial, sans-serif;
+                margin-bottom: 20px;
+            }}
+            .table-striped tr:nth-child(even) {{
                 background-color: #f2f2f2;
-            }
-            tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
+            }}
+            .table th, .table td {{
+                text-align: left;
+                padding: 12px 8px;
+                border: 1px solid #ddd;
+            }}
+            .table th {{
+                background-color: #4472C4;
+                color: white;
+                font-weight: bold;
+            }}
+            .summary {{
+                margin-top: 20px;
+                margin-bottom: 20px;
+                font-size: 14px;
+            }}
+            .header {{
+                color: #333;
+                font-family: Arial, sans-serif;
+            }}
+            .footer {{
+                margin-top: 30px;
+                font-size: 12px;
+                color: #777;
+                border-top: 1px solid #ddd;
+                padding-top: 10px;
+            }}
         </style>
     </head>
     <body>
-        <p>Please find the summary of rules processing below:</p>
-        <table>
-            <tr>
-                <th>Filename</th>
-                <th>Tab</th>
-                <th>#Rules</th>
-                <th>#Matches</th>
-                <th>#Mismatches</th>
-            </tr>
-    """
-    
-    # Add rows from DataFrame
-    for _, row in data_df.iterrows():
-        html += f"""
-            <tr>
-                <td>{row['Filename']}</td>
-                <td>{row['Tab']}</td>
-                <td>{row['#Rules']}</td>
-                <td>{row['#Matches']}</td>
-                <td>{row['#Mismatches']}</td>
-            </tr>
-        """
-    
-    html += """
-        </table>
-        <p>For more details, please see the attached file.</p>
+        <h2 class="header">Excel Processing Results</h2>
+        
+        <div class="summary">
+          <p>The Excel files have been processed. Below are the results:</p>
+        </div>
+        
+        {html_table}
+        
+        <div class="summary">
+          <p>Total Rules: {results_df['#Rules'].sum()}</p>
+          <p>Total Matches: {results_df['#Matches'].sum()}</p>
+          <p>Total Mismatches: {results_df['#Mismatches'].sum()}</p>
+          <p>Match Rate: {(results_df['#Matches'].sum() / results_df['#Rules'].sum() * 100):.2f}%</p>
+          {f"<p>The complete results are attached as an Excel file named '{excel_filename}'.</p>" if attach_excel else ""}
+        </div>
+        
+        <div class="footer">
+          <p>This is an automated email from the Excel Processing Tool.</p>
+          <p>Please do not reply to this email.</p>
+        </div>
     </body>
     </html>
     """
     
-    # Attach HTML part
+    # Attach HTML part to message
     msg.attach(MIMEText(html, 'html'))
     
-    # Attach DataFrame if provided
-    if attachment_df is not None and attachment_name is not None:
-        if attachment_name.endswith('.csv'):
-            # Convert DataFrame to CSV
-            csv_data = attachment_df.to_csv(index=False)
-            attachment = MIMEApplication(csv_data, Name=attachment_name)
-        elif attachment_name.endswith('.xlsx') or attachment_name.endswith('.xls'):
-            try:
-                # Create a temporary file
-                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.xls')
-                temp_file.close()
-                
-                try:
-                    # Use the default engine (whatever is available on the system)
-                    attachment_df.to_excel(temp_file.name, index=False)
-                except Exception as e:
-                    print(f"Excel export failed: {str(e)}")
-                    # Fall back to CSV
-                    os.unlink(temp_file.name)  # Delete the temp file
-                    csv_data = attachment_df.to_csv(index=False)
-                    csv_attachment_name = attachment_name.rsplit('.', 1)[0] + '.csv'
-                    attachment = MIMEApplication(csv_data, Name=csv_attachment_name)
-                    attachment_name = csv_attachment_name
-                    
-                    # Add header and attach
-                    attachment['Content-Disposition'] = f'attachment; filename="{attachment_name}"'
-                    msg.attach(attachment)
-                    return  # Skip the rest of this block
-                
-                # Read the Excel file
-                with open(temp_file.name, 'rb') as f:
-                    excel_data = f.read()
-                    
-                # Delete the temp file
-                os.unlink(temp_file.name)
-                
-                # Create attachment
-                attachment = MIMEApplication(excel_data, Name=attachment_name)
-                
-            except Exception as e:
-                # Fall back to CSV for any error
-                print(f"Error creating Excel file: {str(e)}. Using CSV format instead.")
-                csv_data = attachment_df.to_csv(index=False)
-                csv_attachment_name = attachment_name.rsplit('.', 1)[0] + '.csv'
-                attachment = MIMEApplication(csv_data, Name=csv_attachment_name)
-                attachment_name = csv_attachment_name
-        else:
-            # Default to CSV if extension is not recognized
-            csv_data = attachment_df.to_csv(index=False)
-            attachment_name = f"{attachment_name}.csv"
-            attachment = MIMEApplication(csv_data, Name=attachment_name)
+    # Attach Excel file if requested
+    if attach_excel:
+        # Convert DataFrame to Excel bytes
+        excel_buffer = io.BytesIO()
+        results_df.to_excel(excel_buffer, index=False)
+        excel_buffer.seek(0)
         
-        # Add header with attachment name
-        attachment['Content-Disposition'] = f'attachment; filename="{attachment_name}"'
+        # Create attachment
+        attachment = MIMEBase('application', 'vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        attachment.set_payload(excel_buffer.read())
+        encoders.encode_base64(attachment)
+        attachment.add_header('Content-Disposition', f'attachment; filename="{excel_filename}"')
+        
+        # Add attachment to message
         msg.attach(attachment)
     
-    # Send the email
     try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.ehlo()
+        # Configure SMTP server
+        # Note: In a production environment, you would use your actual SMTP settings
+        server = smtplib.SMTP('smtp.example.com', 587)
         server.starttls()
-        
-        # Login if credentials are provided
-        if username and password:
-            server.login(username, password)
-        
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.close()
-        print(f"Email sent successfully to {to_email}")
+        server.login('username', 'password')  # Replace with actual credentials
+        server.sendmail(msg['From'], msg['To'], msg.as_string())
+        server.quit()
         return True
     except Exception as e:
-        print(f"Failed to send email: {str(e)}")
+        print(f"Error sending email: {e}")
         return False
 
 
-# Example usage
-if __name__ == "__main__":
-    # Sample data for the email body
-    data = {
-        'Filename': ['MASTER COSGP PS LOOKUP', 'COSMOS9 CL PS LOOKUP'],
-        'Tab': ['COSGPLOC', 'COSMOS CL_ACCOUNT_A'],
-        '#Rules': [43055, 1219],
-        '#Matches': [41025, 1103],
-        '#Mismatches': [2030, 116]
+# Example usage:
+"""
+import pandas as pd
+
+# Create sample dataframe with results
+data = [
+    {
+        "Filename": "MASTER COSGP PS LOOKUP",
+        "Tab": "COSGP_LOC",
+        "#Rules": 43055,
+        "#Matches": 41025,
+        "#Mismatches": 2030
+    },
+    {
+        "Filename": "COSMOS9 CL PS LOOKUP",
+        "Tab": "COSMOS_ CL_ACCOUNT_A",
+        "#Rules": 1219,
+        "#Matches": 1103,
+        "#Mismatches": 116
     }
-    
-    email_data_df = pd.DataFrame(data)
-    
-    # Sample attachment data
-    attachment_data = {
-        'Filename': ['MASTER COSGP PS LOOKUP', 'COSMOS9 CL PS LOOKUP'],
-        'Tab': ['COSGPLOC', 'COSMOS CL_ACCOUNT_A'],
-        'Rule ID': ['R001', 'R002'],
-        'Rule Description': ['Check account match', 'Validate customer ID'],
-        'Status': ['Match', 'Mismatch'],
-        'Details': ['Account numbers match', 'Customer ID not found']
-    }
-    
-    attachment_df = pd.DataFrame(attachment_data)
-    
-    # Send the email
-    send_html_email(
-        data_df=email_data_df,
-        to_email='recipient@example.com',
-        subject='Rule Processing Summary Report',
-        from_email='sender@example.com',
-        attachment_df=attachment_df,
-        attachment_name='rule_details.xlsx',  # Excel format will be used if xlwt is available
-        smtp_server='smtp.example.com',
-        smtp_port=587,
-        username='your_username',
-        password='your_password'
-    )
-        smtp_server='smtp.example.com',
-        smtp_port=587,
-        username='your_username',
-        password='your_password'
-    )
+]
+
+df = pd.DataFrame(data)
+
+# Send email with results and Excel attachment
+send_excel_processing_email(
+    results_df=df,
+    recipient_email="user@example.com",
+    subject="Excel Processing Results - Job #12345",
+    attach_excel=True,
+    excel_filename="processing_results.xlsx"
+)
+"""
