@@ -152,15 +152,15 @@ def main():
     # File upload widgets in each column with UHC styled containers
     with col1:
         with st.container():
-            st.markdown('<strong style="color: var(--uhc-blue);">MASTER COSGP PS LOOKUP</strong>', unsafe_allow_html=True)
+            st.markdown('<strong style="color: var(--uhc-blue);">Upload MASTER COSGP PS LOOKUP</strong>', unsafe_allow_html=True)
             master_file = st.file_uploader("Upload Master Lookup file", type=["xlsx", "xls"], key="master", label_visibility="collapsed")
     with col2:
         with st.container():
-            st.markdown('<strong style="color: var(--uhc-blue);">COSMOS9 CL PS LOOKUP</strong>', unsafe_allow_html=True)
+            st.markdown('<strong style="color: var(--uhc-blue);">Upload COSMOS9 CL PS LOOKUP</strong>', unsafe_allow_html=True)
             cosmos_file = st.file_uploader("Upload COSMOS Lookup file", type=["xlsx", "xls"], key="cosmos", label_visibility="collapsed")        
     with col3:
         with st.container():
-            st.markdown('<strong style="color: var(--uhc-blue);">COSMOS SOURCE</strong>', unsafe_allow_html=True)
+            st.markdown('<strong style="color: var(--uhc-blue);">Upload COSMOS SOURCE</strong>', unsafe_allow_html=True)
             source_file = st.file_uploader("Upload Source Excel file", type=["xlsx", "xls"], key="source", label_visibility="collapsed")
             
     # Initialize session state variables if they don't exist
