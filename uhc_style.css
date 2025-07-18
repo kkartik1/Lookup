@@ -1,204 +1,219 @@
-/* UHC Color Palette */
-:root {
-    --uhc-blue: #002677;        /* Primary UHC blue */
-    --uhc-light-blue: #0091da;  /* UHC light blue */
-    --uhc-lighter-blue: #edf5fa; /* Very light blue for backgrounds */
-    --uhc-gray: #5c5c5c;        /* Standard gray for text */
-    --uhc-light-gray: #f2f2f2;  /* Light gray for backgrounds */
-    --uhc-border-color: #d8dbe0; /* Border color */
-}
+    /* UHC Color Palette */
+    :root {
+        --uhc-blue: #002677;        /* Primary UHC blue */
+        --uhc-light-blue: #0091da;  /* UHC light blue */
+        --uhc-lighter-blue: #edf5fa; /* Very light blue for backgrounds */
+        --uhc-gray: #5c5c5c;        /* Standard gray for text */
+        --uhc-light-gray: #f2f2f2;  /* Light gray for backgrounds */
+        --uhc-border-color: #d8dbe0; /* Border color */
+    }
 
-/* Global Styling */
-.block-container {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    max-width: 1200px;
-}
+    /* Global Styling */
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        max-width: 1200px;
+    }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Arial', sans-serif;
-    color: var(--uhc-blue);
-    font-weight: 600;
-}
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Arial', sans-serif;
+        color: var(--uhc-blue);
+        font-weight: 600;
+    }
 
-.main-header {
-    color: var(--uhc-blue);
-    font-size: 2rem;
-    margin-bottom: 0;
-    font-weight: 600;
-    margin-left: 1rem;
-}
+    .main-header {
+        color: var(--uhc-blue);
+        font-size: 2rem;
+        margin-bottom: 0;
+        font-weight: 600;
+        margin-left: 1rem;
+    }
 
-.header-line {
-    border-bottom: 1px solid var(--uhc-light-blue);
-    margin-bottom: 2rem;
-    padding-bottom: 0.5rem;
-}
+    .header-line {
+        border-bottom: 1px solid var(--uhc-light-blue);
+        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+    }
 
-/* Section Headers */
-.section-header {
-    color: var(--uhc-blue);
-    font-size: 1rem;
-    margin-top: 0.05rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    border-bottom: 1px solid var(--uhc-border-color);
-    padding-bottom: 0.5rem;
-}
+    /* Section Headers */
+    .section-header {
+        color: var(--uhc-blue);
+        font-size: 1rem;
+        margin-top: 0.05rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        border-bottom: 1px solid var(--uhc-border-color);
+        padding-bottom: 0.5rem;
+    }
 
-/* File upload areas */
-.upload-container {
-    border: 1px dashed var(--uhc-border-color);
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    padding: 15px;
-    margin-bottom: 1rem;
-    height: 95%;
-}
+    /* File upload areas */
+    .upload-container {
+        border: 1px dashed var(--uhc-border-color);
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 1rem;
+        height: 95%;
+    }
 
-/* Buttons */
-.stButton button {
-    background-color: var(--uhc-blue) !important;
-    color: white !important;
-    border-radius: 4px !important;
-    font-weight: 500 !important;
-    padding: 0.5rem 2rem !important;
-    border: none !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-    transition: all 0.2s ease !important;
-}
+    /* Buttons */
+    .stButton button {
+        background-color: var(--uhc-blue) !important;
+        color: white !important;
+        border-radius: 4px !important;
+        font-weight: 500 !important;
+        padding: 0.5rem 2rem !important;
+        border: none !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        transition: all 0.2s ease !important;
+    }
 
-.stButton button:hover {
-    background-color: var(--uhc-light-blue) !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important;
-}
+    .stButton button:hover {
+        background-color: var(--uhc-light-blue) !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important;
+    }
 
-/* Hide Streamlit branding */
-footer {visibility: hidden;}
-#MainMenu {visibility: hidden;}
+    /* Hide Streamlit branding */
+    footer {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
 
-/* Logo */
-.logo-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
+    /* Logo */
+    .logo-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
 
-.uhc-logo {
-    background-color: var(--uhc-blue);
-    width: 100px;
-    height: 60px;
-    border-radius: 4px;
-    margin-right: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px;
-}
+    .uhc-logo {
+        background-color: var(--uhc-blue);
+        width: 100px;
+        height: 60px;
+        border-radius: 4px;
+        margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+    }
 
-/* Custom UHC logo using CSS */
-.uhc-shield {
-    position: relative;
-    width: 24px;
-    height: 40px;
-    background: white;
-    border-radius: 2px 2px 10px 10px;
-    margin-right: 8px;
-}
+    /* Custom UHC logo using CSS */
+    .uhc-shield {
+        position: relative;
+        width: 24px;
+        height: 40px;
+        background: white;
+        border-radius: 2px 2px 10px 10px;
+        margin-right: 8px;
+    }
 
-.uhc-shield::before {
-    content: "";
-    position: absolute;
-    top: 5px;
-    left: 6px;
-    width: 4px;
-    height: 30px;
-    background: var(--uhc-blue);
-    border-radius: 1px;
-}
+    .uhc-shield::before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 6px;
+        width: 4px;
+        height: 30px;
+        background: var(--uhc-blue);
+        border-radius: 1px;
+    }
 
-.uhc-shield::after {
-    content: "";
-    position: absolute;
-    top: 5px;
-    left: 14px;
-    width: 4px;
-    height: 30px;
-    background: var(--uhc-blue);
-    border-radius: 1px;
-}
+    .uhc-shield::after {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 14px;
+        width: 4px;
+        height: 30px;
+        background: var(--uhc-blue);
+        border-radius: 1px;
+    }
 
-.uhc-text {
-    color: white;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    font-size: 11px;
-}
+    .uhc-text {
+        color: white;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 11px;
+    }
 
-/* Custom styling for Streamlit elements */
-.stAlert {
-    border-radius: 4px !important;
-    border-width: 0px !important;
-}
+    /* Custom styling for Streamlit elements */
+    .stAlert {
+        border-radius: 4px !important;
+        border-width: 0px !important;
+    }
 
-.stAlert > div {
-    padding: 0.75rem 1rem !important;
-}
+    .stAlert > div {
+        padding: 0.75rem 1rem !important;
+    }
 
-/* Data tables with UHC styling */
-div[data-testid="stDataFrame"] > div {
-    border: 1px solid var(--uhc-border-color) !important;
-    border-radius: 4px !important;
-}
+    [data-testid='stFileUploader'] {
+    width: 95%;
+    }
+    [data-testid='stFileUploader'] section {
+        padding: 0;
+        float: left;
+    }
+    [data-testid='stFileUploader'] section > input + div {
+        display: none;
+    }
+    [data-testid='stFileUploader'] section + div {
+        float: right;
+        padding-top: 0;
+    }
 
-div[data-testid="stDataFrame"] th {
-    background-color: var(--uhc-blue) !important;
-    color: white !important;
-    font-weight: 600 !important;
-}
+    /* Data tables with UHC styling */
+    div[data-testid="stDataFrame"] > div {
+        border: 1px solid var(--uhc-border-color) !important;
+        border-radius: 4px !important;
+    }
 
-div[data-testid="stDataFrame"] tr:nth-child(even) {
-    background-color: var(--uhc-lighter-blue) !important;
-}
+    div[data-testid="stDataFrame"] th {
+        background-color: var(--uhc-blue) !important;
+        color: white !important;
+        font-weight: 600 !important;
+    }
 
-div[data-testid="stDataFrame"] tr:hover {
-    background-color: #e6f0f7 !important;
-}
+    div[data-testid="stDataFrame"] tr:nth-child(even) {
+        background-color: var(--uhc-lighter-blue) !important;
+    }
 
-/* Progress bar UHC styling */
-div[data-testid="stProgressBar"] > div {
-    background-color: var(--uhc-light-blue) !important;
-}
+    div[data-testid="stDataFrame"] tr:hover {
+        background-color: #e6f0f7 !important;
+    }
 
-/* Warning and success message styling */
-div[data-testid="stAlert"] {
-    border-radius: 4px !important;
-}
+    /* Progress bar UHC styling */
+    div[data-testid="stProgressBar"] > div {
+        background-color: var(--uhc-light-blue) !important;
+    }
 
-/* UHC table styling */
-.uhc-table {
-    border-collapse: collapse;
-    width: 100%;
-    font-family: Arial, sans-serif;
-    margin-bottom: 1rem;
-}
-.uhc-table th {
-    background-color: #002677;
-    color: white;
-    font-weight: 600;
-    text-align: left;
-    padding: 12px 15px;
-    border-bottom: 2px solid #ddd;
-}
-.uhc-table td {
-    background-color: #002677;
-    padding: 10px 15px;
-    border-bottom: 1px solid #d8dbe0;
-}
-.uhc-table tr:nth-child(even) {
-    background-color: #002677;
-}
-.uhc-table tr:hover {
-    background-color: #e6f0f7;
-}
+    /* Warning and success message styling */
+    div[data-testid="stAlert"] {
+        border-radius: 4px !important;
+    }
+
+    /* UHC table styling */
+    .uhc-table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: Arial, sans-serif;
+        margin-bottom: 1rem;
+    }
+    .uhc-table th {
+        background-color: #002677;
+        color: white;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 2px solid #ddd;
+    }
+    .uhc-table td {
+        background-color: #002677;
+        padding: 10px 15px;
+        border-bottom: 1px solid #d8dbe0;
+    }
+    .uhc-table tr:nth-child(even) {
+        background-color: #002677;
+    }
+    .uhc-table tr:hover {
+        background-color: #e6f0f7;
+    }
