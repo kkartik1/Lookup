@@ -64,6 +64,8 @@ def SendMail(email,MailSUBJECT, MailTEXT="", MailFILES=[]):
 def main(df_source,df_target,email):
     print('source df:',df_source.shape)
     print('target df:',df_target.shape)
+    df_source.columns = df_source.columns.str.upper()
+    df_target.columns = df_target.columns.str.upper()
 
     # print("Source Columns:",df_source.columns)
     # print("Target Columns:",df_target.columns)
