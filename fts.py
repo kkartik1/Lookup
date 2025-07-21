@@ -526,9 +526,7 @@ def render_main_page():
                         st.error(err)
                         return
                 if facets_source_file:
-                    print(sys_df)
                     sys_inp_df = sys_df[(sys_df['System'] == 'FACETS') & (sys_df['Tab'] == 'Target')]
-                    print(sys_inp_df)
                     er, err, summary_data, file_df, tab_lst = process_file_errors(facets_source_file, sys_inp_df, mapping_df, summary_data, file_df, tab_lst)
                     if er:
                         st.error(err)
